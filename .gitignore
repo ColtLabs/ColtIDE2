@@ -1,0 +1,26 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Production builds
+dist/
+dist-ssr/
+*.local
+
+# Tauri / Cargo
+src-tauri/target/
+src-tauri/gen/
+target/
+
+# Editor directories
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# OS metadata
+.DS_Store
+Thumbs.db
