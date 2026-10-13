@@ -1,8 +1,8 @@
-# ColtStudio
+# ColtIDE
 
-**ColtStudio** is the official native desktop Integrated Development Environment (IDE) for the **Colt** programming language.
+**ColtIDE** is the official native desktop Integrated Development Environment (IDE) for the **Colt** programming language.
 
-Built with **Tauri 2**, **React 19**, **TypeScript**, **Vite**, and **Monaco Editor**, ColtStudio delivers a fast, low-latency development experience with zero telemetry, no AI bloat, and pure native system performance.
+Built with **Tauri 2**, **React 19**, **TypeScript**, **Vite**, and **Monaco Editor**, ColtIDE delivers a fast, low-latency development experience with zero telemetry, no AI bloat, and pure native system performance.
 
 ---
 
@@ -48,4 +48,4 @@ Built with **Tauri 2**, **React 19**, **TypeScript**, **Vite**, and **Monaco Edi
 
 ## License
 
-MIT License. Copyright (c) 2026 ColtStudio Team.
+MIT License. Copyright (c) 2026 ColtIDE Team.

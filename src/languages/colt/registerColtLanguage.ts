@@ -25,23 +25,23 @@ export function registerColtLanguage(monaco: Monaco): void {
   // Register language configuration (comments, brackets)
   monaco.languages.setLanguageConfiguration(COLT_LANGUAGE_ID, coltLanguageConfig);
 
-  // Define ColtStudio Dark Theme
-  monaco.editor.defineTheme('coltstudio-dark', {
+  // Define ColtIDE Dark Theme
+  monaco.editor.defineTheme('coltide-dark', {
     base: 'vs-dark',
     inherit: true,
     rules: coltThemeRules,
     colors: {
-      'editor.background': '#0e1117',
-      'editor.foreground': '#e6edf3',
-      'editor.lineHighlightBackground': '#161b22',
-      'editor.selectionBackground': '#264f78',
+      'editor.background': '#121215',
+      'editor.foreground': '#ededf0',
+      'editor.lineHighlightBackground': '#19191d',
+      'editor.selectionBackground': '#1d353a',
       'editorCursor.foreground': '#00d2b4',
-      'editorWhitespace.foreground': '#30363d',
-      'editorLineNumber.foreground': '#484f58',
+      'editorWhitespace.foreground': '#27272a',
+      'editorLineNumber.foreground': '#52525b',
       'editorLineNumber.activeForeground': '#00d2b4',
-      'editorGutter.background': '#0e1117',
-      'editorIndentGuide.background': '#21262d',
-      'editorIndentGuide.activeBackground': '#30363d',
+      'editorGutter.background': '#121215',
+      'editorIndentGuide.background': '#222226',
+      'editorIndentGuide.activeBackground': '#3f3f46',
     },
   });
 

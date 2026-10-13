@@ -365,7 +365,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "coltstudio"
+name = "coltide"
 version = "0.1.0"
 dependencies = [
  "anyhow",

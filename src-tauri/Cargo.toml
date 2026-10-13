@@ -1,16 +1,16 @@
 [package]
-name = "coltstudio"
+name = "coltide"
 version = "0.1.0"
-description = "ColtStudio - Official Native Desktop IDE for Colt"
-authors = ["ColtStudio Team"]
+description = "ColtIDE - Official Native Desktop IDE for Colt"
+authors = ["ColtIDE Team"]
 edition = "2021"
 
 [lib]
-name = "coltstudio_lib"
+name = "coltide_lib"
 crate-type = ["lib", "cdylib", "staticlib"]
 
 [[bin]]
-name = "coltstudio"
+name = "coltide"
 path = "src/main.rs"
 
 [build-dependencies]

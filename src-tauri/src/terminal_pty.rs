@@ -1,4 +1,4 @@
-//! Terminal PTY implementation for ColtStudio
+//! Terminal PTY implementation for ColtIDE
 //! Cross-platform pseudo-terminal management using `portable-pty`.
 
 use portable_pty::{native_pty_system, Child, CommandBuilder, MasterPty, PtySize};

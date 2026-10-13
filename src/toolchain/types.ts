@@ -1,6 +1,6 @@
 /**
- * ColtStudio Toolchain & Integration Types
- * Strictly aligned with ColtLang authoritative specification (COLTSTUDIO_INTEGRATION.md)
+ * ColtIDE Toolchain & Integration Types
+ * Strictly aligned with ColtLang authoritative specification (COLTIDE_INTEGRATION.md)
  */
 
 export type DiagnosticSeverity = 'error' | 'warning' | 'information' | 'hint';

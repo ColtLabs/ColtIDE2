@@ -1,4 +1,4 @@
-//! File system operations for ColtStudio workspace
+//! File system operations for ColtIDE workspace
 
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};

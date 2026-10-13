@@ -44,7 +44,7 @@ export function toMonacoMarkers(diagnostics: ColtDiagnosticItem[]): editor.IMark
 
 /**
  * Converts a Colt diagnostic to a standard LSP Diagnostic (0-indexed)
- * As defined in Section 5 of ColtStudio2 Toolchain Specification
+ * As defined in Section 5 of ColtIDE Toolchain Specification
  */
 export interface LspDiagnostic {
   range: {

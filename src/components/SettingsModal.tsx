@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { X, CheckCircle, AlertTriangle, RefreshCw, Cpu } from 'lucide-react';
+import { X, CheckCircle2, AlertTriangle, RefreshCw, Cpu } from 'lucide-react';
 import { usePanelStore } from '../store/panelStore';
 import { useToolchainStore } from '../store/toolchainStore';
 import { ToolchainManager } from '../toolchain/toolchainManager';
@@ -49,16 +49,16 @@ export const SettingsModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm select-none">
-      <div className="w-[520px] bg-[#161b22] border border-[#30363d] rounded-lg shadow-2xl overflow-hidden font-sans">
+      <div className="w-[520px] bg-card/95 border border-border/80 rounded-xl shadow-glass overflow-hidden font-sans backdrop-blur-md">
         {/* Header */}
-        <div className="flex items-center justify-between px-4 py-3 bg-[#1f242c] border-b border-[#30363d]">
-          <div className="flex items-center gap-2 text-sm font-semibold text-[#e6edf3]">
-            <Cpu size={16} className="text-[#00d2b4]" />
+        <div className="flex items-center justify-between px-4 py-3 bg-muted/40 border-b border-border/60">
+          <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
+            <Cpu size={16} className="text-primary" />
             Colt Toolchain & Integration Settings
           </div>
           <button
             onClick={() => setSettingsOpen(false)}
-            className="p-1 text-[#8b949e] hover:text-white rounded hover:bg-[#30363d]"
+            className="p-1 text-muted-foreground hover:text-foreground rounded-md hover:bg-card/80 transition-colors"
           >
             <X size={16} />
           </button>
@@ -67,36 +67,36 @@ export const SettingsModal: React.FC = () => {
         {/* Content */}
         <div className="p-4 space-y-4 text-xs">
           {/* Active Status Card */}
-          <div className="p-3 rounded bg-[#0e1117] border border-[#30363d] space-y-2">
-            <div className="text-[#8b949e] font-semibold text-[11px] uppercase tracking-wider">
+          <div className="p-3 rounded-lg bg-background/80 border border-border/60 space-y-2">
+            <div className="text-muted-foreground font-semibold text-[11px] uppercase tracking-wider">
               Current Toolchain Status
             </div>
             <div className="flex items-center gap-2">
               {status.available && !status.isMock ? (
                 <>
-                  <CheckCircle size={16} className="text-[#00d2b4]" />
-                  <span className="text-[#00d2b4] font-bold">Native Colt Toolchain Active</span>
-                  <span className="text-[#8b949e]">v{status.version}</span>
+                  <CheckCircle2 size={16} className="text-primary" />
+                  <span className="text-primary font-bold">Native Colt Toolchain Active</span>
+                  <span className="text-muted-foreground">v{status.version}</span>
                 </>
               ) : (
                 <>
-                  <AlertTriangle size={16} className="text-[#d29922]" />
-                  <span className="text-[#d29922] font-bold">
+                  <AlertTriangle size={16} className="text-amber-400" />
+                  <span className="text-amber-400 font-bold">
                     Mock Mode (Simulated Toolchain for Development)
                   </span>
                 </>
               )}
             </div>
-            <div className="text-[11px] text-[#8b949e]">
+            <div className="text-[11px] text-muted-foreground/80">
               Capabilities: {status.capabilities.join(', ') || 'none'}
             </div>
           </div>
 
           {/* Configurable Executable Path */}
           <div className="space-y-1.5">
-            <label className="font-semibold text-[#c9d1d9] flex items-center justify-between">
+            <label className="font-semibold text-foreground flex items-center justify-between">
               <span>Colt Executable Path (colt.compilerPath)</span>
-              <span className="text-[10px] text-[#8b949e] font-normal">
+              <span className="text-[10px] text-muted-foreground font-normal">
                 Leave empty for auto-discovery
               </span>
             </label>
@@ -106,18 +106,18 @@ export const SettingsModal: React.FC = () => {
                 value={pathInput}
                 placeholder="Auto-detect (e.g. ./target/release/colt.exe or PATH)"
                 onChange={(e) => setPathInput(e.target.value)}
-                className="flex-1 bg-[#0e1117] text-white font-mono px-3 py-1.5 rounded border border-[#30363d] focus:border-[#00d2b4] focus:outline-none"
+                className="flex-1 bg-background text-foreground font-mono px-3 py-1.5 rounded-md border border-border/70 focus:border-primary focus:outline-none transition-colors text-xs"
               />
               <button
                 onClick={handleTestPath}
                 disabled={testing}
-                className="flex items-center gap-1.5 px-3 py-1.5 rounded bg-[#00d2b4] text-[#0e1117] font-semibold hover:bg-[#00d2b4]/90 disabled:opacity-50"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-primary text-primary-foreground font-semibold hover:bg-primary/90 disabled:opacity-50 transition-colors"
               >
                 <RefreshCw size={13} className={testing ? 'animate-spin' : ''} />
                 Verify
               </button>
             </div>
-            <p className="text-[11px] text-[#8b949e]">
+            <p className="text-[11px] text-muted-foreground/80">
               Searches configured path first, then workspace local build, sibling ColtLang repository, and system PATH.
             </p>
           </div>
@@ -125,10 +125,10 @@ export const SettingsModal: React.FC = () => {
           {/* Test / Feedback message */}
           {testResult && (
             <div
-              className={`p-2.5 rounded border text-[11px] ${
+              className={`p-2.5 rounded-md border text-[11px] ${
                 testResult.includes('successful')
-                  ? 'bg-[#13322b] text-[#00d2b4] border-[#00d2b4]/30'
-                  : 'bg-[#3b2d1d] text-[#d29922] border-[#d29922]/30'
+                  ? 'bg-primary/10 text-primary border-primary/30'
+                  : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
               }`}
             >
               {testResult}
@@ -136,16 +136,16 @@ export const SettingsModal: React.FC = () => {
           )}
 
           {/* Fallback Switch */}
-          <div className="pt-2 border-t border-[#30363d] flex items-center justify-between">
+          <div className="pt-2 border-t border-border/60 flex items-center justify-between">
             <div>
-              <div className="font-semibold text-[#c9d1d9]">Simulated Mock Mode</div>
-              <div className="text-[11px] text-[#8b949e]">
+              <div className="font-semibold text-foreground">Simulated Mock Mode</div>
+              <div className="text-[11px] text-muted-foreground/80">
                 Force simulated responses for UI layout and offline testing
               </div>
             </div>
             <button
               onClick={handleUseMock}
-              className="px-2.5 py-1 rounded bg-[#21262d] text-[#c9d1d9] border border-[#30363d] hover:bg-[#30363d] transition"
+              className="px-2.5 py-1 rounded-md bg-muted text-foreground border border-border/60 hover:bg-muted/80 transition"
             >
               Engage Mock
             </button>
@@ -153,10 +153,10 @@ export const SettingsModal: React.FC = () => {
         </div>
 
         {/* Footer */}
-        <div className="flex justify-end px-4 py-3 bg-[#1f242c] border-t border-[#30363d]">
+        <div className="flex justify-end px-4 py-3 bg-muted/40 border-t border-border/60">
           <button
             onClick={() => setSettingsOpen(false)}
-            className="px-4 py-1.5 rounded bg-[#21262d] text-white hover:bg-[#30363d] font-semibold transition"
+            className="px-4 py-1.5 rounded-md bg-primary text-primary-foreground hover:bg-primary/90 font-semibold transition text-xs"
           >
             Close
           </button>

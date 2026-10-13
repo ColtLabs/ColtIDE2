@@ -1,14 +1,14 @@
-# ColtStudio & ColtLang Integration Specification
+# ColtIDE & ColtLang Integration Specification
 
-This document details the interface contracts between **ColtStudio** and the **Colt Toolchain** (`colt.exe`).
+This document details the interface contracts between **ColtIDE** and the **Colt Toolchain** (`colt.exe`).
 
-Reference source: `ColtLang/docs/COLTSTUDIO_INTEGRATION.md` (Protocol Version 1).
+Reference source: `ColtLang/docs/COLTIDE_INTEGRATION.md` (Protocol Version 1).
 
 ---
 
 ## 1. Toolchain Handshake Contract
 
-Before executing operations, ColtStudio issues:
+Before executing operations, ColtIDE issues:
 
 ```bash
 colt version --json
@@ -31,7 +31,7 @@ colt version --json
 }
 ```
 
-If the handshake succeeds and protocol version matches `1`, ColtStudio activates the **Native Colt Toolchain** adapter. Otherwise, it gracefully engages the **Mock Colt Toolchain** with an explicit `[MOCK TOOLCHAIN]` status badge in the UI.
+If the handshake succeeds and protocol version matches `1`, ColtIDE activates the **Native Colt Toolchain** adapter. Otherwise, it gracefully engages the **Mock Colt Toolchain** with an explicit `[MOCK TOOLCHAIN]` status badge in the UI.
 
 ---
 
@@ -101,7 +101,7 @@ Returns the formatted document text for in-place buffer replacement.
 
 ## 5. Schema Mapping & Catalog View
 
-ColtStudio extracts catalog metadata (`CONNECT` statements and `DEFINE COLLECTION` blocks) using `colt parse --json`. The schema view displays connections, collections, fields, and constraints in a **strictly read-only** presentation with explicit source attribution.
+ColtIDE extracts catalog metadata (`CONNECT` statements and `DEFINE COLLECTION` blocks) using `colt parse --json`. The schema view displays connections, collections, fields, and constraints in a **strictly read-only** presentation with explicit source attribution.
 
 ---
 

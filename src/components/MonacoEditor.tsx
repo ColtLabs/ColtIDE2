@@ -101,19 +101,19 @@ export const MonacoEditor: React.FC = () => {
 
   if (!activeTab) {
     return (
-      <div className="flex flex-col items-center justify-center h-full bg-[#0e1117] text-[#8b949e] select-none">
+      <div className="flex flex-col items-center justify-center h-full bg-background text-muted-foreground select-none">
         <div className="text-sm font-medium mb-1">No File Open</div>
-        <div className="text-xs text-[#484f58]">Select a .colt file from the workspace explorer</div>
+        <div className="text-xs text-muted-foreground/60">Select a .colt file from the workspace explorer</div>
       </div>
     );
   }
 
   return (
-    <div className="w-full h-full bg-[#0e1117] overflow-hidden">
+    <div className="w-full h-full bg-[#121215] overflow-hidden">
       <Editor
         height="100%"
         language={activeTab.endsWith('.colt') ? COLT_LANGUAGE_ID : 'plaintext'}
-        theme="coltstudio-dark"
+        theme="coltide-dark"
         value={currentContent}
         onChange={handleEditorChange}
         onMount={handleEditorDidMount}

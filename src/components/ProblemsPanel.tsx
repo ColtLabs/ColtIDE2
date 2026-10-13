@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlertCircle, AlertTriangle, Info, CheckCircle } from 'lucide-react';
+import { AlertCircle, AlertTriangle, Info, CheckCircle2 } from 'lucide-react';
 import { useToolchainStore } from '../store/toolchainStore';
 import { usePanelStore } from '../store/panelStore';
 import { useWorkspaceStore } from '../store/workspaceStore';
@@ -24,17 +24,19 @@ export const ProblemsPanel: React.FC = () => {
 
   if (diagnostics.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-xs text-[#8b949e]">
-        <CheckCircle size={24} className="text-[#00d2b4] mb-2" />
-        <span>No problems detected in the current file.</span>
-        <span className="text-[11px] text-[#484f58] mt-0.5">Colt syntax and catalog validation clean</span>
+      <div className="flex flex-col items-center justify-center h-full text-xs text-muted-foreground select-none">
+        <CheckCircle2 size={24} className="text-primary mb-2" />
+        <span className="font-medium text-foreground">No problems detected in the current file.</span>
+        <span className="text-[11px] text-muted-foreground/60 mt-0.5">
+          Colt syntax and catalog validation are clean
+        </span>
       </div>
     );
   }
 
   return (
     <div className="h-full overflow-y-auto font-mono text-xs select-none">
-      <div className="divide-y divide-[#21262d]">
+      <div className="divide-y divide-border/40">
         {diagnostics.map((diag, idx) => {
           const isError = diag.severity === 'error';
           const isWarning = diag.severity === 'warning';
@@ -43,39 +45,39 @@ export const ProblemsPanel: React.FC = () => {
             <div
               key={`${diag.code}-${diag.line}-${diag.column}-${idx}`}
               onClick={() => handleDiagnosticClick(diag)}
-              className="flex items-start gap-2.5 px-3 py-2 hover:bg-[#161b22] cursor-pointer transition-colors group"
+              className="flex items-start gap-2.5 px-3 py-2 hover:bg-card/60 cursor-pointer transition-colors group"
             >
               {/* Severity Icon */}
               <div className="mt-0.5 shrink-0">
                 {isError ? (
-                  <AlertCircle size={14} className="text-[#f85149]" />
+                  <AlertCircle size={14} className="text-destructive" />
                 ) : isWarning ? (
-                  <AlertTriangle size={14} className="text-[#d29922]" />
+                  <AlertTriangle size={14} className="text-amber-400" />
                 ) : (
-                  <Info size={14} className="text-[#58a6ff]" />
+                  <Info size={14} className="text-sky-400" />
                 )}
               </div>
 
               {/* Message, Code and Hint */}
               <div className="flex-1 min-w-0">
                 <div className="flex items-center gap-2">
-                  <span className="font-semibold text-[#e6edf3] group-hover:text-white truncate">
+                  <span className="font-semibold text-foreground group-hover:text-primary transition-colors truncate">
                     {diag.message}
                   </span>
-                  <span className="px-1.5 py-0.2 rounded text-[10px] bg-[#1f242c] text-[#8b949e] border border-[#30363d]">
+                  <span className="px-1.5 py-0.2 rounded text-[10px] bg-card text-muted-foreground border border-border/60">
                     {diag.code}
                   </span>
                 </div>
 
                 {diag.hint && (
-                  <div className="text-[11px] text-[#8b949e] mt-0.5">
-                    <span className="text-[#e3b341]">Hint:</span> {diag.hint}
+                  <div className="text-[11px] text-muted-foreground/90 mt-0.5">
+                    <span className="text-amber-400 font-semibold">Hint:</span> {diag.hint}
                   </div>
                 )}
               </div>
 
               {/* Location Badge */}
-              <div className="text-[11px] text-[#8b949e] shrink-0 font-sans group-hover:text-[#c9d1d9]">
+              <div className="text-[11px] text-muted-foreground/70 shrink-0 font-sans group-hover:text-foreground">
                 Line {diag.line}, Col {diag.column}
               </div>
             </div>

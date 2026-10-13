@@ -1,4 +1,4 @@
-//! ColtStudio Native Desktop IDE Core Library
+//! ColtIDE Native Desktop IDE Core Library
 
 pub mod colt_toolchain;
 pub mod fs_commands;
@@ -105,5 +105,5 @@ pub fn run() {
             fs_delete_file,
         ])
         .run(tauri::generate_context!())
-        .expect("error while running ColtStudio application");
+        .expect("error while running ColtIDE application");
 }

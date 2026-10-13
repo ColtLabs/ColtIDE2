@@ -15,16 +15,16 @@ export const TerminalPanel: React.FC = () => {
       fontSize: 12,
       fontFamily: "'JetBrains Mono', 'Fira Code', 'Consolas', monospace",
       theme: {
-        background: '#0e1117',
-        foreground: '#c9d1d9',
+        background: '#121215',
+        foreground: '#ededf0',
         cursor: '#00d2b4',
-        selectionBackground: '#264f78',
-        black: '#0e1117',
+        selectionBackground: '#1d353a',
+        black: '#121215',
         red: '#f85149',
-        green: '#7ee787',
-        yellow: '#e3b341',
-        blue: '#58a6ff',
-        magenta: '#d2a8ff',
+        green: '#00d2b4',
+        yellow: '#f59e0b',
+        blue: '#38bdf8',
+        magenta: '#c084fc',
         cyan: '#00d2b4',
         white: '#ffffff',
       },
@@ -44,9 +44,9 @@ export const TerminalPanel: React.FC = () => {
 
     xtermInstance.current = term;
 
-    term.writeln('\x1b[1;36mColtStudio Integrated Terminal\x1b[0m');
+    term.writeln('\x1b[1;36mColtIDE Integrated Terminal\x1b[0m');
     term.writeln('\x1b[90mColt Toolchain v0.2.0 Environment Active\x1b[0m\r\n');
-    term.write('\x1b[32mcoltstudio>\x1b[0m ');
+    term.write('\x1b[32mcoltide>\x1b[0m ');
 
     let currentLine = '';
     term.onData((data) => {
@@ -72,7 +72,7 @@ export const TerminalPanel: React.FC = () => {
         }
 
         currentLine = '';
-        term.write('\x1b[32mcoltstudio>\x1b[0m ');
+        term.write('\x1b[32mcoltide>\x1b[0m ');
       } else if (code === 127 || code === 8) {
         // Backspace
         if (currentLine.length > 0) {

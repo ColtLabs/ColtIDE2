@@ -1,13 +1,12 @@
 import React from 'react';
-import { ChevronRight, Play, CheckCircle2, AlignLeft, Layers } from 'lucide-react';
+import { ChevronRight, FileCode, Layers } from 'lucide-react';
 import { useWorkspaceStore } from '../store/workspaceStore';
 import { useToolchainStore } from '../store/toolchainStore';
 import { usePanelStore } from '../store/panelStore';
 
 export const Breadcrumbs: React.FC = () => {
-  const { activeTab, fileContents, markFileSaved, updateFileContent } = useWorkspaceStore();
-  const { runCheck, runPlan, runFormat, loadSchema, isChecking, isPlanning, isFormatting } =
-    useToolchainStore();
+  const { activeTab, fileContents } = useWorkspaceStore();
+  const { loadSchema } = useToolchainStore();
   const { setActivePanelTab } = usePanelStore();
 
   if (!activeTab) return null;
@@ -15,39 +14,24 @@ export const Breadcrumbs: React.FC = () => {
   const parts = activeTab.split('/');
   const currentContent = fileContents[activeTab] || '';
 
-  const handleCheck = async () => {
-    await runCheck(currentContent, true);
-    setActivePanelTab('problems');
-  };
-
-  const handlePlan = async () => {
-    await runPlan(currentContent, true);
-    setActivePanelTab('output');
-  };
-
-  const handleFormat = async () => {
-    const formatted = await runFormat(currentContent, true);
-    if (formatted) {
-      updateFileContent(activeTab, formatted);
-      markFileSaved(activeTab);
-    }
-  };
-
   const handleInspectSchema = async () => {
     await loadSchema(currentContent, true);
     setActivePanelTab('schema');
   };
 
   return (
-    <div className="flex items-center justify-between h-7 bg-[#161b22] border-b border-[#30363d] px-3 text-xs select-none">
+    <div className="flex items-center justify-between h-[28px] bg-background/40 backdrop-blur-sm border-b border-border/50 px-3 text-xs select-none shrink-0">
       {/* File Path Segments */}
-      <div className="flex items-center gap-1 text-[#8b949e] font-mono">
+      <div className="flex items-center gap-1.5 text-muted-foreground font-mono text-[11px]">
+        <FileCode size={12} className="text-primary shrink-0" />
         {parts.map((part, index) => (
           <React.Fragment key={index}>
-            {index > 0 && <ChevronRight size={12} className="text-[#484f58]" />}
+            {index > 0 && <ChevronRight size={11} className="text-muted-foreground/40 shrink-0" />}
             <span
               className={
-                index === parts.length - 1 ? 'text-[#c9d1d9] font-medium' : 'text-[#8b949e]'
+                index === parts.length - 1
+                  ? 'text-foreground font-medium'
+                  : 'text-muted-foreground/70 hover:text-foreground transition-colors cursor-pointer'
               }
             >
               {part}
@@ -56,47 +40,15 @@ export const Breadcrumbs: React.FC = () => {
         ))}
       </div>
 
-      {/* Colt Operations Toolbar */}
-      <div className="flex items-center gap-2">
-        <button
-          onClick={handleCheck}
-          disabled={isChecking}
-          title="Run colt check (Validate Syntax & Catalog)"
-          className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#1f242c] text-[#00d2b4] hover:bg-[#282f3a] transition border border-[#30363d] disabled:opacity-50"
-        >
-          <CheckCircle2 size={12} />
-          {isChecking ? 'Checking...' : 'Check'}
-        </button>
-
-        <button
-          onClick={handlePlan}
-          disabled={isPlanning}
-          title="Run colt plan (Inspect Multi-Engine SQL Execution Plan)"
-          className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#1f242c] text-[#58a6ff] hover:bg-[#282f3a] transition border border-[#30363d] disabled:opacity-50"
-        >
-          <Play size={12} />
-          {isPlanning ? 'Planning...' : 'Plan'}
-        </button>
-
-        <button
-          onClick={handleFormat}
-          disabled={isFormatting}
-          title="Run colt fmt (Canonical Code Formatter)"
-          className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#1f242c] text-[#d2a8ff] hover:bg-[#282f3a] transition border border-[#30363d] disabled:opacity-50"
-        >
-          <AlignLeft size={12} />
-          {isFormatting ? 'Formatting...' : 'Format'}
-        </button>
-
-        <button
-          onClick={handleInspectSchema}
-          title="Inspect Schema Mapping (Read-Only Catalog)"
-          className="flex items-center gap-1 px-2 py-0.5 rounded text-[11px] font-medium bg-[#1f242c] text-[#e3b341] hover:bg-[#282f3a] transition border border-[#30363d]"
-        >
-          <Layers size={12} />
-          Schema
-        </button>
-      </div>
+      {/* Schema quick inspection badge */}
+      <button
+        onClick={handleInspectSchema}
+        title="Inspect Schema Mapping (Read-Only Catalog)"
+        className="flex items-center gap-1 px-1.5 py-0.5 rounded text-[10px] font-sans text-muted-foreground hover:text-foreground hover:bg-card/60 transition border border-transparent hover:border-border/40"
+      >
+        <Layers size={11} className="text-amber-400" />
+        <span>Catalog</span>
+      </button>
     </div>
   );
 };

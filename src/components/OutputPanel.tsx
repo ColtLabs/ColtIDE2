@@ -6,17 +6,17 @@ export const OutputPanel: React.FC = () => {
   const { outputLogs, clearLogs, planResult } = useToolchainStore();
 
   return (
-    <div className="flex flex-col h-full bg-[#0e1117] text-xs font-mono select-text">
+    <div className="flex flex-col h-full bg-background text-xs font-mono select-text">
       {/* Action Bar */}
-      <div className="flex items-center justify-between px-3 py-1 bg-[#161b22] border-b border-[#30363d] select-none">
-        <span className="text-[#8b949e] flex items-center gap-1.5 font-sans">
-          <Terminal size={13} className="text-[#00d2b4]" />
+      <div className="flex items-center justify-between px-3 py-1.5 bg-card/40 border-b border-border/60 select-none">
+        <span className="text-muted-foreground flex items-center gap-1.5 font-sans text-xs">
+          <Terminal size={13} className="text-primary" />
           Colt Toolchain Output Stream
         </span>
         <button
           onClick={clearLogs}
           title="Clear Output Stream"
-          className="p-1 text-[#8b949e] hover:text-white hover:bg-[#1f242c] rounded transition"
+          className="p-1 text-muted-foreground/75 hover:text-foreground hover:bg-card rounded-md transition"
         >
           <Trash2 size={13} />
         </button>
@@ -25,8 +25,8 @@ export const OutputPanel: React.FC = () => {
       <div className="flex-1 overflow-y-auto p-3 space-y-2">
         {/* If we have a compiled plan, show plan steps */}
         {planResult && planResult.steps.length > 0 && (
-          <div className="mb-4 p-2.5 rounded bg-[#161b22] border border-[#30363d]">
-            <div className="flex items-center gap-1.5 text-[#00d2b4] font-semibold mb-2">
+          <div className="mb-4 p-3 rounded-lg bg-card/50 border border-border/60">
+            <div className="flex items-center gap-1.5 text-primary font-semibold mb-2.5">
               <Code2 size={14} />
               Compiled Multi-Engine Execution Plan ({planResult.steps.length} Steps)
             </div>
@@ -34,21 +34,23 @@ export const OutputPanel: React.FC = () => {
               {planResult.steps.map((step) => (
                 <div
                   key={step.step}
-                  className="p-2 rounded bg-[#0e1117] border border-[#21262d] text-[11px]"
+                  className="p-2.5 rounded-md bg-background border border-border/40 text-[11px]"
                 >
-                  <div className="flex items-center justify-between text-[#58a6ff] mb-1">
+                  <div className="flex items-center justify-between text-sky-400 mb-1.5">
                     <span className="font-bold">Step {step.step}: {step.operation}</span>
                     {step.collection && (
-                      <span className="text-[#8b949e]">Collection: {step.collection}</span>
+                      <span className="text-muted-foreground/80 font-normal">
+                        Collection: <span className="text-foreground">{step.collection}</span>
+                      </span>
                     )}
                   </div>
                   {step.sql && (
-                    <div className="text-[#e6edf3] bg-[#161b22] p-1.5 rounded overflow-x-auto text-[11px]">
+                    <div className="text-foreground/90 bg-card/80 p-2 rounded border border-border/30 overflow-x-auto text-[11px] font-mono">
                       {step.sql}
                     </div>
                   )}
                   {step.params && step.params.length > 0 && (
-                    <div className="mt-1 text-[#8b949e] text-[10px]">
+                    <div className="mt-1.5 text-muted-foreground/80 text-[10px]">
                       Params: {JSON.stringify(step.params)}
                     </div>
                   )}
@@ -62,14 +64,14 @@ export const OutputPanel: React.FC = () => {
         {outputLogs.map((log) => {
           const colorClass =
             log.type === 'error'
-              ? 'text-[#f85149]'
+              ? 'text-destructive font-medium'
               : log.type === 'success'
-              ? 'text-[#00d2b4]'
-              : 'text-[#c9d1d9]';
+              ? 'text-primary'
+              : 'text-foreground/90';
 
           return (
             <div key={log.id} className="flex items-start gap-2 leading-relaxed">
-              <span className="text-[#484f58] shrink-0 font-sans">[{log.time}]</span>
+              <span className="text-muted-foreground/50 shrink-0 font-sans">[{log.time}]</span>
               <span className={colorClass}>{log.message}</span>
             </div>
           );

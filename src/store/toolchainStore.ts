@@ -45,7 +45,7 @@ export const useToolchainStore = create<ToolchainState>((set, get) => ({
       id: 'init-1',
       time: new Date().toLocaleTimeString(),
       type: 'info',
-      message: 'ColtStudio started. Initializing toolchain manager...',
+      message: 'ColtIDE started. Initializing toolchain manager...',
     },
   ],
   schemaMetadata: null,

@@ -1,4 +1,4 @@
-# ColtStudio Development Guide
+# ColtIDE Development Guide
 
 This document describes how to set up the development environment, run the IDE locally, execute automated tests, and verify toolchain integration.
 
@@ -18,7 +18,7 @@ This document describes how to set up the development environment, run the IDE l
 Clone and install dependencies:
 
 ```bash
-# In the ColtStudio repository root:
+# In the ColtIDE repository root:
 npm install
 ```
 
@@ -75,5 +75,5 @@ cargo test
    cd ../ColtLang
    cargo build --release -p colt-cli
    ```
-2. ColtStudio will automatically discover `../ColtLang/target/release/colt.exe` via its discovery chain!
-3. Alternatively, click the **Settings** icon (gear) in the bottom right corner of ColtStudio and specify the explicit path in the **Colt Executable Path** input.
+2. ColtIDE will automatically discover `../ColtLang/target/release/colt.exe` via its discovery chain!
+3. Alternatively, click the **Settings** icon (gear) in the bottom right corner of ColtIDE and specify the explicit path in the **Colt Executable Path** input.

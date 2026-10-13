@@ -1,6 +1,6 @@
-//! Colt Toolchain Integration Layer for ColtStudio
+//! Colt Toolchain Integration Layer for ColtIDE
 //! Discovers the native Colt compiler executable and coordinates safe invocations
-//! according to the authoritative ColtStudio Toolchain & Integration Specification.
+//! according to the authoritative ColtIDE Toolchain & Integration Specification.
 
 use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};

@@ -1,6 +1,6 @@
-# ColtStudio Packaging & Distribution Guide
+# ColtIDE Packaging & Distribution Guide
 
-This document describes how to package **ColtStudio** for production distribution on Windows, macOS, and Linux using Tauri 2.
+This document describes how to package **ColtIDE** for production distribution on Windows, macOS, and Linux using Tauri 2.
 
 ---
 
@@ -17,7 +17,7 @@ This document describes how to package **ColtStudio** for production distributio
 
 ## 2. Bundling the Colt Toolchain Executable
 
-When distributing ColtStudio as a self-contained IDE, the precompiled native `colt` executable can be packaged as an external binary resource in Tauri:
+When distributing ColtIDE as a self-contained IDE, the precompiled native `colt` executable can be packaged as an external binary resource in Tauri:
 
 1. Copy the target platform's `colt.exe` (or `colt`) to `src-tauri/binaries/colt-$TARGET_TRIPLE.exe`.
 2. Reference the external binary in `src-tauri/tauri.conf.json`:
@@ -30,7 +30,7 @@ When distributing ColtStudio as a self-contained IDE, the precompiled native `co
      }
    }
    ```
-3. At runtime, ColtStudio checks:
+3. At runtime, ColtIDE checks:
    - User configured path (`colt.compilerPath`)
    - Bundled application resource directory (`resources/binaries/colt.exe`)
    - System `PATH`
@@ -45,16 +45,16 @@ npm run tauri build
 ```
 
 ### Windows Build Artifacts:
-- `src-tauri/target/release/bundle/msi/ColtStudio_0.1.0_x64_en-US.msi`
-- `src-tauri/target/release/bundle/nsis/ColtStudio_0.1.0_x64-setup.exe`
+- `src-tauri/target/release/bundle/msi/ColtIDE_0.1.0_x64_en-US.msi`
+- `src-tauri/target/release/bundle/nsis/ColtIDE_0.1.0_x64-setup.exe`
 
 ### macOS Build Artifacts:
-- `src-tauri/target/release/bundle/dmg/ColtStudio_0.1.0_x64.dmg`
-- `src-tauri/target/release/bundle/macos/ColtStudio.app`
+- `src-tauri/target/release/bundle/dmg/ColtIDE_0.1.0_x64.dmg`
+- `src-tauri/target/release/bundle/macos/ColtIDE.app`
 
 ### Linux Build Artifacts:
-- `src-tauri/target/release/bundle/deb/coltstudio_0.1.0_amd64.deb`
-- `src-tauri/target/release/bundle/appimage/coltstudio_0.1.0_amd64.AppImage`
+- `src-tauri/target/release/bundle/deb/coltide_0.1.0_amd64.deb`
+- `src-tauri/target/release/bundle/appimage/coltide_0.1.0_amd64.AppImage`
 
 ---
 
@@ -64,5 +64,5 @@ npm run tauri build
 2. [ ] Run automated tests: `npm run test`
 3. [ ] Run typecheck: `npm run typecheck`
 4. [ ] Build desktop bundle: `npm run tauri build`
-5. [ ] Verify `.colt` file associations open ColtStudio
+5. [ ] Verify `.colt` file associations open ColtIDE
 6. [ ] Verify handshake with bundled or system `colt` toolchain

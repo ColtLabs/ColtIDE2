@@ -1,16 +1,27 @@
-import React, { useEffect } from 'react';
-import { WorkspaceExplorer } from './components/WorkspaceExplorer';
-import { EditorTabs } from './components/EditorTabs';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { SoloTitlebar } from './components/titlebar/SoloTitlebar';
+import { SoloIconRail, type RailTab } from './components/sidebar/SoloIconRail';
+import { SoloSidebar } from './components/sidebar/SoloSidebar';
+import { SoloColtanePanel } from './components/sidebar/SoloColtanePanel';
+import { SoloTabs } from './components/editor/SoloTabs';
 import { Breadcrumbs } from './components/Breadcrumbs';
 import { MonacoEditor } from './components/MonacoEditor';
-import { BottomPanel } from './components/BottomPanel';
-import { ToolchainStatusBar } from './components/ToolchainStatusBar';
+import { SoloBottomDrawer } from './components/drawer/SoloBottomDrawer';
+import { SoloStatusBar } from './components/statusbar/SoloStatusBar';
 import { SettingsModal } from './components/SettingsModal';
 import { ToolchainManager } from './toolchain/toolchainManager';
 import { useToolchainStore } from './store/toolchainStore';
+import { usePanelStore } from './store/panelStore';
 
 export const App: React.FC = () => {
   const { setStatus, addLog } = useToolchainStore();
+  const { setActivePanelTab, setBottomPanelOpen } = usePanelStore();
+
+  const [activeRailTab, setActiveRailTab] = useState<RailTab>('explorer');
+  const [sidebarWidth, setSidebarWidth] = useState(240);
+  const [isSidebarVisible, setIsSidebarVisible] = useState(true);
+
+  const isDraggingRef = useRef(false);
 
   useEffect(() => {
     // Initialize toolchain discovery on startup
@@ -35,46 +46,95 @@ export const App: React.FC = () => {
     initToolchain();
   }, [setStatus, addLog]);
 
+  // Handle Rail Tab switching
+  const handleRailTabChange = (tab: RailTab) => {
+    if (tab === 'problems') {
+      setActivePanelTab('problems');
+      setBottomPanelOpen(true);
+      return;
+    }
+    if (tab === 'terminal') {
+      setActivePanelTab('terminal');
+      setBottomPanelOpen(true);
+      return;
+    }
+
+    if (activeRailTab === tab) {
+      // Toggle sidebar visibility on click
+      setIsSidebarVisible((prev) => !prev);
+    } else {
+      setActiveRailTab(tab);
+      setIsSidebarVisible(true);
+    }
+  };
+
+  // Resizable sidebar logic
+  const handleMouseDown = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    isDraggingRef.current = true;
+
+    const handleMouseMove = (moveEvent: MouseEvent) => {
+      if (!isDraggingRef.current) return;
+      // Subtract the 48px width of the SoloIconRail
+      const newWidth = Math.max(160, Math.min(480, moveEvent.clientX - 48));
+      setSidebarWidth(newWidth);
+    };
+
+    const handleMouseUp = () => {
+      isDraggingRef.current = false;
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('mouseup', handleMouseUp);
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mouseup', handleMouseUp);
+  }, []);
+
   return (
-    <div className="flex flex-col h-screen w-screen bg-[#0e1117] text-[#c9d1d9] overflow-hidden select-none font-sans">
-      {/* Top Application Bar */}
-      <header className="flex items-center justify-between h-8 bg-[#161b22] border-b border-[#30363d] px-3 select-none">
-        <div className="flex items-center gap-2">
-          <svg className="w-4 h-4 text-[#00d2b4]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-          </svg>
-          <span className="font-bold text-xs tracking-wider text-white">
-            ColtStudio <span className="text-[#00d2b4] text-[10px] font-normal font-mono">v0.1.0</span>
-          </span>
-        </div>
+    <div className="flex flex-col h-screen w-screen bg-background text-foreground overflow-hidden select-none font-sans antialiased">
+      {/* Solo-Styled Vibrancy Titlebar */}
+      <SoloTitlebar />
 
-        <div className="text-[11px] text-[#8b949e] font-mono">
-          Native Desktop IDE for Colt
-        </div>
+      {/* Main Workspace Frame */}
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Leftmost Activity Icon Rail */}
+        <SoloIconRail
+          activeTab={activeRailTab}
+          onTabChange={handleRailTabChange}
+        />
 
-        <div className="w-16" />
-      </header>
+        {/* Dynamic Translucent Sidebar */}
+        {isSidebarVisible && (
+          <>
+            {activeRailTab === 'explorer' && <SoloSidebar width={sidebarWidth} />}
+            {activeRailTab === 'coltane' && <SoloColtanePanel width={sidebarWidth} />}
 
-      {/* Main IDE Workspace Area */}
-      <div className="flex flex-1 overflow-hidden">
-        {/* Workspace File Explorer */}
-        <WorkspaceExplorer />
+            {/* Split Resizer Divider */}
+            <div
+              className="split-divider"
+              onMouseDown={handleMouseDown}
+              title="Drag to resize sidebar"
+            />
+          </>
+        )}
 
-        {/* Editor & Panel Main Area */}
-        <main className="flex flex-col flex-1 overflow-hidden bg-[#0e1117]">
-          <EditorTabs />
+        {/* Editor & Bottom Panels Area */}
+        <main className="flex flex-col flex-1 overflow-hidden bg-background">
+          <SoloTabs />
           <Breadcrumbs />
-          <div className="flex-1 overflow-hidden relative">
+
+          <div className="flex-1 overflow-hidden relative bg-[#121215]">
             <MonacoEditor />
           </div>
-          <BottomPanel />
+
+          <SoloBottomDrawer />
         </main>
       </div>
 
-      {/* Global Status Bar */}
-      <ToolchainStatusBar />
+      {/* Sleek Global Status Bar */}
+      <SoloStatusBar />
 
-      {/* Settings Modal */}
+      {/* Toolchain & Preferences Modal */}
       <SettingsModal />
     </div>
   );
