@@ -3,6 +3,7 @@ import { X, CheckCircle2, AlertTriangle, RefreshCw, Cpu } from 'lucide-react';
 import { usePanelStore } from '../store/panelStore';
 import { useToolchainStore } from '../store/toolchainStore';
 import { ToolchainManager } from '../toolchain/toolchainManager';
+import { checkColtaneDb, getColtaneApiUrl, setColtaneApiUrl } from '../toolchain/coltaneApi';
 
 export const SettingsModal: React.FC = () => {
   const { isSettingsOpen, setSettingsOpen } = usePanelStore();
@@ -11,6 +12,8 @@ export const SettingsModal: React.FC = () => {
   const [pathInput, setPathInput] = useState(status.executablePath || '');
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState<string | null>(null);
+  const [apiUrl, setApiUrl] = useState(getColtaneApiUrl());
+  const [testingApi, setTestingApi] = useState(false);
 
   if (!isSettingsOpen) return null;
 
@@ -45,6 +48,21 @@ export const SettingsModal: React.FC = () => {
     setStatus(newStatus);
     setTestResult('Switched to Mock Development Toolchain.');
     addLog('info', 'Switched to Mock Development Toolchain.');
+  };
+
+  const handleTestApi = async () => {
+    setTestingApi(true);
+    setColtaneApiUrl(apiUrl);
+    try {
+      const health = await checkColtaneDb();
+      setTestResult(`ColtaneDB connected at ${getColtaneApiUrl()} (uptime ${Math.round(health.uptime ?? 0)}s).`);
+      addLog('success', `ColtaneDB connectivity verified at ${getColtaneApiUrl()}.`);
+    } catch (err: unknown) {
+      setTestResult(`ColtaneDB connection failed: ${String(err)}`);
+      addLog('error', `ColtaneDB connectivity failed at ${getColtaneApiUrl()}: ${String(err)}`);
+    } finally {
+      setTestingApi(false);
+    }
   };
 
   return (
@@ -122,11 +140,38 @@ export const SettingsModal: React.FC = () => {
             </p>
           </div>
 
+          {/* ColtaneDB endpoint */}
+          <div className="space-y-1.5">
+            <label className="font-semibold text-foreground flex items-center justify-between">
+              <span>ColtaneDB API Endpoint</span>
+              <span className="text-[10px] text-muted-foreground font-normal">Used by Run</span>
+            </label>
+            <div className="flex gap-2">
+              <input
+                type="url"
+                value={apiUrl}
+                placeholder="http://127.0.0.1:3000"
+                onChange={(e) => setApiUrl(e.target.value)}
+                className="flex-1 bg-background text-foreground font-mono px-3 py-1.5 rounded-md border border-border/70 focus:border-primary focus:outline-none transition-colors text-xs"
+              />
+              <button
+                onClick={handleTestApi}
+                disabled={testingApi}
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-md bg-muted text-foreground border border-border/60 hover:bg-muted/80 disabled:opacity-50 transition-colors"
+              >
+                <RefreshCw size={13} className={testingApi ? 'animate-spin' : ''} />
+                Test
+              </button>
+            </div>
+            <p className="text-[11px] text-muted-foreground/80">
+              ColtaneDB must expose <span className="font-mono">/health</span> and <span className="font-mono">/api/v1/query</span>.
+            </p>
+          </div>
           {/* Test / Feedback message */}
           {testResult && (
             <div
               className={`p-2.5 rounded-md border text-[11px] ${
-                testResult.includes('successful')
+                testResult.includes('successful') || testResult.includes('connected')
                   ? 'bg-primary/10 text-primary border-primary/30'
                   : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
               }`}

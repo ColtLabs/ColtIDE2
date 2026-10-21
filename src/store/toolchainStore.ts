@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 import { ToolchainManager } from '../toolchain/toolchainManager';
-import { executeColt } from '../toolchain/coltaneApi';
+import { checkColtaneDb, executeColt } from '../toolchain/coltaneApi';
 import type {
   ColtToolchainStatus,
   ColtDiagnosticItem,
@@ -148,12 +148,14 @@ export const useToolchainStore = create<ToolchainState>((set, get) => ({
   },
   runQuery: async (source: string) => {
     set({ isRunning: true });
-    get().addLog('info', 'Executing Colt against ColtaneDB...');
     try {
+      get().addLog('info', 'Checking ColtaneDB connectivity...');
+      await checkColtaneDb();
+      get().addLog('success', 'ColtaneDB is reachable. Executing Colt...');
       const result = await executeColt(source);
       get().addLog('success', `ColtaneDB execution completed: ${JSON.stringify(result)}`);
     } catch (err: unknown) {
-      get().addLog('error', `ColtaneDB execution failed: ${String(err)}`);
+      get().addLog('error', `ColtaneDB connectivity or execution failed: ${String(err)}`);
     } finally {
       set({ isRunning: false });
     }
