@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use std::path::{Path, PathBuf};
 use std::process::Stdio;
 use std::time::Duration;
-use tokio::io::{AsyncReadExt, AsyncWriteExt};
+use tokio::io::AsyncWriteExt;
 use tokio::process::Command;
 use tokio::time::timeout;
 
@@ -76,10 +76,14 @@ pub struct ColtCheckResult {
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ColtPlanStep {
+    #[serde(default)]
     pub step: u32,
+    #[serde(default)]
     pub operation: String,
     pub collection: Option<String>,
+    #[serde(alias = "backend")]
     pub connection: Option<String>,
+    #[serde(alias = "parameterizedStatement")]
     pub sql: Option<String>,
     pub params: Option<Vec<serde_json::Value>>,
 }
@@ -101,6 +105,16 @@ pub struct ColtFormatResult {
     pub error: Option<String>,
 }
 
+fn resolve_candidate(candidate: impl AsRef<Path>) -> Option<PathBuf> {
+    let path = candidate.as_ref();
+    let path = if path.is_absolute() { path.to_path_buf() } else { std::env::current_dir().ok()?.join(path) };
+    path.is_file().then_some(path)
+}
+
+fn executable_name() -> &'static str {
+    if cfg!(windows) { "colt.exe" } else { "colt" }
+}
+
 /// Locates the Colt compiler executable using a prioritized discovery chain:
 /// 1. Configured custom path provided by user settings
 /// 2. COLT_COMPILER_PATH environment variable
@@ -112,43 +126,32 @@ pub fn discover_colt_executable(configured_path: Option<&str>) -> Option<PathBuf
     if let Some(custom) = configured_path {
         let trimmed = custom.trim();
         if !trimmed.is_empty() {
-            let p = PathBuf::from(trimmed);
-            if p.exists() && p.is_file() {
-                return Some(p);
-            }
+            if let Some(p) = resolve_candidate(trimmed) { return Some(p); }
         }
     }
 
     // 2. Environment variable
     if let Ok(env_path) = std::env::var("COLT_COMPILER_PATH") {
-        let p = PathBuf::from(env_path.trim());
-        if p.exists() && p.is_file() {
-            return Some(p);
-        }
+        if let Some(p) = resolve_candidate(env_path.trim()) { return Some(p); }
     }
 
     // 3. Check sibling ColtLang repository
-    let binary_name = if cfg!(windows) { "colt.exe" } else { "colt" };
+    let binary_name = executable_name();
     let sibling_candidates = [
-        format!("../ColtLang/target/release/{}", binary_name),
-        format!("../ColtLang/target/debug/{}", binary_name),
-        format!("../../ColtLang/target/release/{}", binary_name),
-        format!("e:/Projects/ColtLang/target/release/{}", binary_name),
-        format!("e:/Projects/ColtLang/target/debug/{}", binary_name),
+        format!("../ColtLang/target/release/{binary_name}"),
+        format!("../ColtLang/target/debug/{binary_name}"),
+        format!("../../ColtLang/target/release/{binary_name}"),
+        format!("e:/Projects/ColtLang/target/release/{binary_name}"),
+        format!("e:/Projects/ColtLang/target/debug/{binary_name}"),
     ];
 
     for candidate in &sibling_candidates {
-        let p = PathBuf::from(candidate);
-        if p.exists() && p.is_file() {
-            return Some(p);
-        }
+        if let Some(p) = resolve_candidate(candidate) { return Some(p); }
     }
 
     // 4. Check workspace target
-    let local_target = PathBuf::from(format!("target/release/{}", binary_name));
-    if local_target.exists() && local_target.is_file() {
-        return Some(local_target);
-    }
+    if let Some(p) = resolve_candidate(format!("target/release/{binary_name}")) { return Some(p); }
+    if let Some(p) = resolve_candidate(format!("target/debug/{binary_name}")) { return Some(p); }
 
     // 5. Check system PATH
     if let Ok(found) = which::which(binary_name) {
@@ -237,7 +240,7 @@ pub async fn check_colt(
                 diagnostics: vec![],
                 steps: None,
                 execution_time_ms: None,
-                rawOutput: Some("Colt compiler not found".into()),
+                raw_output: Some("Colt compiler not found".into()),
             };
         }
     };
@@ -260,7 +263,7 @@ pub async fn check_colt(
                 diagnostics: vec![],
                 steps: None,
                 execution_time_ms: None,
-                rawOutput: Some(format!("Failed to spawn colt process: {}", e)),
+                raw_output: Some(format!("Failed to spawn colt process: {}", e)),
             };
         }
     };
@@ -295,7 +298,7 @@ pub async fn check_colt(
                     diagnostics,
                     steps,
                     execution_time_ms: Some(elapsed),
-                    rawOutput: Some(stdout_str),
+                    raw_output: Some(stdout_str),
                 }
             } else {
                 ColtCheckResult {
@@ -304,7 +307,7 @@ pub async fn check_colt(
                     diagnostics: vec![],
                     steps: None,
                     execution_time_ms: Some(elapsed),
-                    rawOutput: Some(stdout_str),
+                    raw_output: Some(stdout_str),
                 }
             }
         }
@@ -314,7 +317,7 @@ pub async fn check_colt(
             diagnostics: vec![],
             steps: None,
             execution_time_ms: Some(elapsed),
-            rawOutput: Some("Command timed out".into()),
+            raw_output: Some("Command timed out".into()),
         },
     }
 }
@@ -332,7 +335,7 @@ pub async fn plan_colt(
                 source: if is_buffer { "<stdin>".into() } else { path_or_source },
                 steps: vec![],
                 diagnostics: vec![],
-                rawOutput: Some("Colt compiler not found".into()),
+                raw_output: Some("Colt compiler not found".into()),
             };
         }
     };
@@ -353,7 +356,7 @@ pub async fn plan_colt(
                 source: if is_buffer { "<stdin>".into() } else { path_or_source },
                 steps: vec![],
                 diagnostics: vec![],
-                rawOutput: Some(format!("Failed to spawn colt process: {}", e)),
+                raw_output: Some(format!("Failed to spawn colt process: {}", e)),
             };
         }
     };
@@ -387,14 +390,14 @@ pub async fn plan_colt(
                     source: if is_buffer { "<stdin>".into() } else { path_or_source },
                     steps,
                     diagnostics,
-                    rawOutput: Some(stdout_str),
+                    raw_output: Some(stdout_str),
                 }
             } else {
                 ColtPlanResult {
                     source: if is_buffer { "<stdin>".into() } else { path_or_source },
                     steps: vec![],
                     diagnostics: vec![],
-                    rawOutput: Some(stdout_str),
+                    raw_output: Some(stdout_str),
                 }
             }
         }
@@ -402,7 +405,7 @@ pub async fn plan_colt(
             source: if is_buffer { "<stdin>".into() } else { path_or_source },
             steps: vec![],
             diagnostics: vec![],
-            rawOutput: Some("Plan compilation timed out".into()),
+            raw_output: Some("Plan compilation timed out".into()),
         },
     }
 }
