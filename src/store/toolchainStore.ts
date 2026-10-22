@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { ToolchainManager } from '../toolchain/toolchainManager';
+import { checkColtaneDb, executeColt } from '../toolchain/coltaneApi';
 import type {
   ColtToolchainStatus,
   ColtDiagnosticItem,
@@ -23,6 +24,7 @@ interface ToolchainState {
   isChecking: boolean;
   isPlanning: boolean;
   isFormatting: boolean;
+  isRunning: boolean;
 
   setStatus: (status: ColtToolchainStatus) => void;
   setDiagnostics: (diagnostics: ColtDiagnosticItem[]) => void;
@@ -35,6 +37,7 @@ interface ToolchainState {
   runPlan: (sourceOrPath: string, isBuffer?: boolean) => Promise<void>;
   runFormat: (sourceOrPath: string, isBuffer?: boolean) => Promise<string | null>;
   loadSchema: (sourceOrPath: string, isBuffer?: boolean) => Promise<void>;
+  runQuery: (source: string) => Promise<void>;
 }
 
 export const useToolchainStore = create<ToolchainState>((set, get) => ({
@@ -53,6 +56,7 @@ export const useToolchainStore = create<ToolchainState>((set, get) => ({
   isChecking: false,
   isPlanning: false,
   isFormatting: false,
+  isRunning: false,
 
   setStatus: (status) => set({ status }),
   setDiagnostics: (diagnostics) => set({ diagnostics }),
@@ -140,6 +144,20 @@ export const useToolchainStore = create<ToolchainState>((set, get) => ({
       set({ schemaMetadata: meta });
     } catch {
       // Ignored
+    }
+  },
+  runQuery: async (source: string) => {
+    set({ isRunning: true });
+    try {
+      get().addLog('info', 'Checking ColtaneDB connectivity...');
+      await checkColtaneDb();
+      get().addLog('success', 'ColtaneDB is reachable. Executing Colt...');
+      const result = await executeColt(source);
+      get().addLog('success', `ColtaneDB execution completed: ${JSON.stringify(result)}`);
+    } catch (err: unknown) {
+      get().addLog('error', `ColtaneDB connectivity or execution failed: ${String(err)}`);
+    } finally {
+      set({ isRunning: false });
     }
   },
 }));

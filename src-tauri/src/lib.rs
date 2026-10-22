@@ -11,12 +11,12 @@ use colt_toolchain::{
 use fs_commands::FileTreeEntry;
 use std::path::Path;
 
-#[tauri::command]
+#[tauri::command(rename_all = "camelCase")]
 pub async fn colt_get_toolchain_info(configured_path: Option<String>) -> ColtToolchainStatus {
     get_toolchain_info(configured_path).await
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "camelCase")]
 pub async fn colt_check(
     path_or_source: String,
     is_buffer: bool,
@@ -25,7 +25,7 @@ pub async fn colt_check(
     check_colt(path_or_source, is_buffer, configured_path).await
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "camelCase")]
 pub async fn colt_plan(
     path_or_source: String,
     is_buffer: bool,
@@ -34,7 +34,7 @@ pub async fn colt_plan(
     plan_colt(path_or_source, is_buffer, configured_path).await
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "camelCase")]
 pub async fn colt_format(
     path_or_source: String,
     is_buffer: bool,
@@ -43,7 +43,7 @@ pub async fn colt_format(
     format_colt(path_or_source, is_buffer, configured_path).await
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "camelCase")]
 pub async fn colt_parse_ast(
     path_or_source: String,
     is_buffer: bool,
@@ -52,35 +52,35 @@ pub async fn colt_parse_ast(
     parse_colt_ast(path_or_source, is_buffer, configured_path).await
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "camelCase")]
 pub async fn fs_read_dir_tree(path: String, depth: u32) -> Result<Vec<FileTreeEntry>, String> {
     fs_commands::read_dir_tree(Path::new(&path), depth)
         .await
         .map_err(|e| e.to_string())
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "camelCase")]
 pub async fn fs_read_file(path: String) -> Result<String, String> {
     fs_commands::read_file(Path::new(&path))
         .await
         .map_err(|e| e.to_string())
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "camelCase")]
 pub async fn fs_write_file(path: String, content: String) -> Result<(), String> {
     fs_commands::write_file(Path::new(&path), &content)
         .await
         .map_err(|e| e.to_string())
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "camelCase")]
 pub async fn fs_create_file(path: String) -> Result<(), String> {
     fs_commands::create_file(Path::new(&path))
         .await
         .map_err(|e| e.to_string())
 }
 
-#[tauri::command]
+#[tauri::command(rename_all = "camelCase")]
 pub async fn fs_delete_file(path: String) -> Result<(), String> {
     fs_commands::delete_file(Path::new(&path))
         .await

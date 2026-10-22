@@ -18,7 +18,7 @@ import { cn } from '../../lib/utils';
 export const SoloTitlebar: React.FC = () => {
   const { workspacePath, activeTab, fileContents, markFileSaved, updateFileContent } =
     useWorkspaceStore();
-  const { runCheck, runPlan, runFormat, isChecking, isPlanning, isFormatting } =
+  const { runCheck, runPlan, runFormat, runQuery, isChecking, isPlanning, isFormatting, isRunning } =
     useToolchainStore();
   const {
     toggleBottomPanel,
@@ -58,6 +58,12 @@ export const SoloTitlebar: React.FC = () => {
       updateFileContent(activeTab, formatted);
       markFileSaved(activeTab);
     }
+  };
+
+  const handleRun = async () => {
+    if (!currentContent) return;
+    await runQuery(currentContent);
+    setActivePanelTab('output');
   };
 
   return (
@@ -150,6 +156,18 @@ export const SoloTitlebar: React.FC = () => {
           <Play size={13} className={isPlanning ? 'animate-spin text-blue-400' : ''} />
           <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap group-hover:max-w-[4rem] group-hover:opacity-100 group-hover:ml-1 text-[11px] font-medium transition-all duration-200">
             Plan
+          </span>
+        </button>
+
+        <button
+          onClick={handleRun}
+          disabled={isRunning || !activeTab}
+          title="Run Colt against ColtaneDB"
+          className="group inline-flex h-7 items-center rounded-md px-2 bg-transparent text-muted-foreground hover:bg-card hover:text-primary transition-all duration-150 border border-transparent hover:border-border/50 active:scale-95 disabled:opacity-50"
+        >
+          <Play size={13} className={isRunning ? 'animate-spin text-primary' : 'text-primary'} />
+          <span className="max-w-0 opacity-0 overflow-hidden whitespace-nowrap group-hover:max-w-[3rem] group-hover:opacity-100 group-hover:ml-1 text-[11px] font-medium transition-all duration-200">
+            Run
           </span>
         </button>
 

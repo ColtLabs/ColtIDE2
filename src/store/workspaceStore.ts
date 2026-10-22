@@ -59,14 +59,14 @@ export const useWorkspaceStore = create<WorkspaceState>((set, get) => ({
 
 CONNECT main AS postgres(env("DATABASE_URL"))
 
-DEFINE COLLECTION users ON main {
+DEFINE COLLECTION users @backend(main) {
   id: uuid @key,
   email: text @unique @index,
   display_name: text,
   created_at: time @index
 }
 
-DEFINE COLLECTION posts ON main {
+DEFINE COLLECTION posts @backend(main) {
   id: uuid @key,
   user_id: uuid @index,
   title: text,
